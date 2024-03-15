@@ -1,5 +1,5 @@
 format: v0.1
-name: Yolov9 Setup & Training
+name: Yolov7 Setup & Training
 vars:
   - name: base_model
     type: string
@@ -9,7 +9,7 @@ vars:
   - name: data_folder
     type: folder
     label: Data Folder
-    default: coco128
+    default: nfsCoco
 
   - name: train_epoch
     type: string
@@ -32,25 +32,31 @@ steps:
     type: docker_run
     needs:
       - checkout code
-    image: p9ebc297/yolov9-train:v2
-    flavor: medium
+    image: p844a57c/pytorch:21.08-py3
+    flavor: Small
     folders:
       - ${data_folder}:/mlsteam/data/${data_folder}
     run: |
-      python train_dual.py --workers 1 --device 0 --batch-size ${train_batchsize} --epochs ${train_epoch} --data data/${data_folder}.yaml \
-          --img 640 --cfg models/detect/yolov9-c.yaml --weights ${base_model} \
-          --name yolov9-custom --hyp hyp.scratch-high.yaml \
-          --min-items 0 --close-mosaic 15
+      # apt install required packages
+      apt update
+      apt install -y zip htop screen libgl1-mesa-glx
+      # pip install required packages
+      pip install seaborn thop
+      wget https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7.pt
+      python train.py --workers 8 --device 0 --batch-size ${train_batchsize} --epochs ${train_epoch} --weights yolov7.pt
 
   - name: evaluate
     type: docker_run
     needs:
       - train
-    image: p9ebc297/yolov9-train:v2
-    flavor: medium
+    image: p844a57c/pytorch:21.08-py3
+    flavor: small
     folders:
       - ${data_folder}:/mlsteam/data/${data_folder}
     run: |
-        python val_dual.py --data data/${data_folder}.yaml --img 640 --batch 32 --conf 0.001\
-            --iou 0.7 --device 0 --weights 'runs/train/yolov9-custom/weights/best.pt' \
-            --name yolov9_c_640_val
+      # apt install required packages
+      apt update
+      apt install -y zip htop screen libgl1-mesa-glx
+      # pip install required packages
+      pip install seaborn thop
+      python test.py --data data/coco.yaml --img 640 --batch 16 --conf 0.001 --iou 0.65 --device 0 --weights runs/train/exp/weights/best.pt --name yolov7_640_val

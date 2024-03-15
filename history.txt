@@ -1,0 +1,38 @@
+    1  ls
+    2  cd ..
+    3  ls
+    4  cd data/
+    5  ls
+    6  cd nfsCoco/
+    7  ls
+    8  pwd
+    9  cat val2017.txt
+   10  pwd
+   11  ls
+   12  ls -al images/val2017
+   13  ls -al images
+   14  ls
+   15  rm train2017.cache val2017.cache
+   16  ls images/
+   17  cd ../..
+   18  cd workspace/
+   19  ls
+   20  vi data/coco.yaml 
+   21  cd ../data/nfsCoco/
+   22  ls
+   23  cat val2017.txt 
+   24  cd ~
+   25  ls
+   26  cd /mlsteam/workspace/
+   27  ls
+   28  wget https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7.pt
+   29  vi train.py 
+   30  vi data/coco.yaml
+   31  python train.py --workers 8 --device 0 --batch-size 32
+   32  pip install pandas
+   33  python train.py --workers 8 --device 0 --batch-size 32
+   34  apt update
+   35  apt install -y zip htop screen libgl1-mesa-glx
+   36  pip install seaborn thop
+   37  python train.py --workers 8 --device 0 --batch-size 32
+   38  history > history.txt
